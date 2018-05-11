@@ -1,6 +1,7 @@
 const nodeResolve = require("rollup-plugin-node-resolve");
 const typescript = require("rollup-plugin-typescript2");
 const commonjs = require("rollup-plugin-commonjs");
+const uglify = require("rollup-plugin-uglify");
 
 let outputDeclaration = true;
 if (process.env.TYPESCRIPT_DECLARATION !== undefined) {
@@ -8,6 +9,9 @@ if (process.env.TYPESCRIPT_DECLARATION !== undefined) {
 }
 
 module.exports = {
+    output: {
+        sourcemap: true
+    },
     plugins: [
         commonjs({
             namedExports: { chai: ["expect"] }
@@ -19,6 +23,7 @@ module.exports = {
                     declaration: outputDeclaration
                 }
             }
-        })
+        }),
+        uglify()
     ]
 };
