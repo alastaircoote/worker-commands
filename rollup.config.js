@@ -9,9 +9,7 @@ if (process.env.TYPESCRIPT_DECLARATION !== undefined) {
 }
 
 module.exports = {
-    output: {
-        sourcemap: true
-    },
+    sourceMap: true,
     plugins: [
         commonjs({
             namedExports: { chai: ["expect"] }
@@ -23,7 +21,7 @@ module.exports = {
                     declaration: outputDeclaration
                 }
             }
-        }),
-        uglify()
+        })
+        // uglify()
     ]
 };

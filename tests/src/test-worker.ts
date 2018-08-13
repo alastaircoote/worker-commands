@@ -32,3 +32,7 @@ registerCommand("dispatch-notification-event", async function(opts: any) {
         event
     );
 });
+
+registerCommand("test-notification-transform", opts => {
+    return Promise.resolve(opts.value);
+});
