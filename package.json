@@ -1,7 +1,7 @@
 {
     "name": "worker-commands",
-    "version": "1.0.0",
-    "description": "",
+    "version": "1.1.0",
+    "description": "A library wrapping up commonly-used service worker commands, primarily for use with notifications",
     "main": "lib/worker-commands.js",
     "module": "lib/worker-commands.es6.js",
     "typings": "lib/index.d.ts",
@@ -34,5 +34,9 @@
         "static-server": "^2.2.1",
         "tslib": "^1.9.0",
         "typescript": "^2.7.2"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/alastaircoote/worker-commands.git"
     }
 }
