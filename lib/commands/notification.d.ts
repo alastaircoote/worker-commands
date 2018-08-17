@@ -12,12 +12,13 @@ export interface TransformCommandValue {
     command: string;
     options: any;
 }
+export declare type Transformable<T> = T | TransformCacheValue | TransformCommandValue;
 export interface ShowNotification {
-    title: string;
-    badge?: string | TransformCacheValue | TransformCommandValue;
-    icon?: string | TransformCacheValue | TransformCommandValue;
-    image?: string | TransformCacheValue | TransformCommandValue;
-    body: string;
+    title: Transformable<string>;
+    badge?: Transformable<string>;
+    icon?: Transformable<string>;
+    image?: Transformable<string>;
+    body: Transformable<string>;
     data?: any;
     tag?: string;
     actions?: NotificationAction[];

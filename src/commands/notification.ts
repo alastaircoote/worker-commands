@@ -20,20 +20,19 @@ export interface TransformCommandValue {
     options: any;
 }
 
+export type Transformable<T> = T | TransformCacheValue | TransformCommandValue;
+
 export interface ShowNotification {
-    title: string;
-    badge?: string | TransformCacheValue | TransformCommandValue;
-    icon?: string | TransformCacheValue | TransformCommandValue;
-    image?: string | TransformCacheValue | TransformCommandValue;
-    body: string;
+    title: Transformable<string>;
+    badge?: Transformable<string>;
+    icon?: Transformable<string>;
+    image?: Transformable<string>;
+    body: Transformable<string>;
     data?: any;
     tag?: string;
     actions?: NotificationAction[];
     events?: { [name: string]: RunCommand<any> | RunCommand<any>[] };
 }
-
-type TransformCapableKey = "icon" | "badge" | "image";
-const TransformCapableKeys: TransformCapableKey[] = ["icon", "badge", "image"];
 
 export interface RemoveNotificationOptions {
     tag?: string;
@@ -87,22 +86,30 @@ async function showNotification(options: ShowNotification) {
 
     // The showNotification command separates title from the rest of the options,
     // so we'll oblige
-    const { title, events, icon, badge, image, ...nonTitleOptions } = options;
+    const { title, events, body, icon, badge, image, ...nonTitleOptions } = options;
 
     // We support remote notifications reading out icons, badges and images from
     // the local cache or from a command:
 
-    let [transformedIcon, transformedBadge, transformedImage] = await Promise.all([
+    let [transformedIcon, transformedBadge, transformedImage, transformedBody] = await Promise.all([
         transformOption(icon),
         transformOption(badge),
-        transformOption(image)
+        transformOption(image),
+        transformOption(body)
     ]);
 
     let finalOptions = Object.assign({}, nonTitleOptions, {
         icon: transformedIcon,
         image: transformedImage,
-        badge: transformedBadge
+        badge: transformedBadge,
+        body: transformedBody
     });
+
+    let finalTitle = await transformOption(title);
+
+    if (!finalTitle) {
+        throw new Error("No title in final result. Notification must have title.");
+    }
 
     finalOptions.data = Object.assign(finalOptions.data || {}, {
         // We add this so that when we're looking at notificationclick etc. events
@@ -112,7 +119,7 @@ async function showNotification(options: ShowNotification) {
         __events: events
     });
 
-    await self.registration.showNotification(title, finalOptions);
+    await self.registration.showNotification(finalTitle, finalOptions);
 }
 
 async function removeNotifications(removeOptions?: RemoveNotificationOptions, event?: NotificationEvent) {
