@@ -13,7 +13,12 @@ async function handlePush(e: PushEvent) {
         // This is specific to pushkin and how Firebase Cloud Messaging sends payloads.
         // Maybe we can standardise this at some point.
         json = JSON.parse(json.data.payload);
-    } else if (json.notification && json.data && json.data.__isWorkerCommandPayload) {
+    } else if (
+        json.notification &&
+        json.data &&
+        json.data.__isWorkerCommandPayload &&
+        !json.data.__workerCommandPayload
+    ) {
         console.info("Received Firebase notification payload");
         await fireCommand({
             command: "notification.show",
@@ -22,7 +27,13 @@ async function handlePush(e: PushEvent) {
         return;
     }
 
-    if (!json.__workerCommandPayload) {
+    let payload = json.__workerCommandPayload;
+
+    if (!payload && json.data) {
+        payload = json.data.__workerCommandPayload;
+    }
+
+    if (!payload) {
         return;
     }
     console.info("Received push payload", json.__workerCommandPayload);
