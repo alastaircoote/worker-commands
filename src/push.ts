@@ -36,9 +36,14 @@ async function handlePush(e: PushEvent) {
     if (!payload) {
         return;
     }
-    console.info("Received push payload", json.__workerCommandPayload);
+
+    if (typeof payload === "string") {
+        payload = JSON.parse(payload);
+    }
+
+    console.info("Received push payload", payload);
     try {
-        await fireCommand(json.__workerCommandPayload);
+        await fireCommand(payload);
     } catch (err) {
         console.error(err);
     }
