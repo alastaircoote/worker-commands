@@ -1,6 +1,6 @@
 {
     "name": "worker-commands",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "A library wrapping up commonly-used service worker commands, primarily for use with notifications",
     "main": "lib/worker-commands.js",
     "module": "lib/worker-commands.es6.js",
@@ -9,7 +9,7 @@
         "build-worker-lib-es6": "rollup -c rollup.config.js src/index.ts --output.file lib/worker-commands.es6.js --output.format es",
         "build-worker-lib": "rollup -c rollup.config.js src/index.ts --output.file lib/worker-commands.js --output.format umd --name worker-commands",
         "build-client-lib": "TYPESCRIPT_DECLARATION=false rollup -c rollup.config.js src/bridge/client-side.ts --output.format umd --name sendcommand --output.file send-command.js",
-        "build": "npm run build-worker-lib-es6 &&npm run build-worker-lib && npm run build-client-lib",
+        "build": "rollup -c rollup.new.config.js",
         "test": "cd tests && gobble",
         "demo": "cp lib/worker-commands.js demo/worker-commands.js && cd demo && static-server"
     },

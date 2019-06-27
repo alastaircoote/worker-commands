@@ -26,7 +26,11 @@ async function handlePush(e: PushEvent) {
         return;
     }
     console.info("Received push payload", json.__workerCommandPayload);
-    await fireCommand(json.__workerCommandPayload);
+    try {
+        await fireCommand(json.__workerCommandPayload);
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 export function setup() {

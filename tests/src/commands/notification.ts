@@ -197,7 +197,7 @@ describe("Notifications", function() {
 
     it("processes cache transforms for images, icons and badges", async () => {
         let testArray = new Uint8Array([1, 2, 3, 4]);
-        let toCompare = "data:;base64," + base64.fromByteArray(testArray);
+        let toCompare = "data:application/octet-stream;base64," + base64.fromByteArray(testArray);
         let testResponse = new Response(testArray);
         let cache = await self.caches.open("test-cache");
         await cache.put("/test-response", testResponse);

@@ -3,6 +3,7 @@ import "./commands/custom-command";
 import "./commands/notification";
 import "./commands/client";
 import "./commands/registration";
+import "./commands/if";
 
 function addRequestButton() {
     let button = document.createElement("button");
