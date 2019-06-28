@@ -39,10 +39,10 @@ async function ifClient<T>(ifStatement: IfOptions<T, IfClientOptions>, event?: N
 
     if (existing === true && ifStatement.then) {
         console.info("Client if statement passed, executing 'then' commands");
-        fireCommand(ifStatement.then, event);
+        return fireCommand(ifStatement.then, event);
     } else if (existing === false && ifStatement.else) {
         console.info("Client if statement failed, executing 'else' commands");
-        fireCommand(ifStatement.else, event);
+        return fireCommand(ifStatement.else, event);
     } else if (existing) {
         console.warn("Client if statement passed, but there are no 'then' commands");
     } else {
