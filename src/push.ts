@@ -3,50 +3,51 @@ import { fireCommand } from "./command-registry";
 declare var self: ServiceWorkerGlobalScope;
 
 async function handlePush(e: PushEvent) {
-    if (!e.data) {
-        return;
-    }
+    e.waitUntil(async function() {
+        if (!e.data) {
+            return;
+        }
+        let json: any = await e.data.json();
 
-    let json: any = await e.data.json();
+        if (json.data && json.data.payload) {
+            // This is specific to pushkin and how Firebase Cloud Messaging sends payloads.
+            // Maybe we can standardise this at some point.
+            json = JSON.parse(json.data.payload);
+        } else if (
+            json.notification &&
+            json.data &&
+            json.data.__isWorkerCommandPayload &&
+            !json.data.__workerCommandPayload
+        ) {
+            console.info("Received Firebase notification payload");
+            await fireCommand({
+                command: "notification.show",
+                options: json.notification
+            });
+            return;
+        }
 
-    if (json.data && json.data.payload) {
-        // This is specific to pushkin and how Firebase Cloud Messaging sends payloads.
-        // Maybe we can standardise this at some point.
-        json = JSON.parse(json.data.payload);
-    } else if (
-        json.notification &&
-        json.data &&
-        json.data.__isWorkerCommandPayload &&
-        !json.data.__workerCommandPayload
-    ) {
-        console.info("Received Firebase notification payload");
-        await fireCommand({
-            command: "notification.show",
-            options: json.notification
-        });
-        return;
-    }
+        let payload = json.__workerCommandPayload;
 
-    let payload = json.__workerCommandPayload;
+        if (!payload && json.data) {
+            payload = json.data.__workerCommandPayload;
+        }
 
-    if (!payload && json.data) {
-        payload = json.data.__workerCommandPayload;
-    }
+        if (!payload) {
+            return;
+        }
 
-    if (!payload) {
-        return;
-    }
+        if (typeof payload === "string") {
+            payload = JSON.parse(payload);
+        }
 
-    if (typeof payload === "string") {
-        payload = JSON.parse(payload);
-    }
-
-    console.info("Received push payload", payload);
-    try {
-        await fireCommand(payload);
-    } catch (err) {
-        console.error(err);
-    }
+        console.info("Received push payload", payload);
+        try {
+            await fireCommand(payload);
+        } catch (err) {
+            console.error(err);
+        }
+    });
 }
 
 export function setup() {
